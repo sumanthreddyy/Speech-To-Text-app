@@ -21,7 +21,6 @@ def main():
         key="microphone",
         mode="audio",
         audio_receiver_size=1024,
-        required=False,
     )
 
     # Flag to indicate if the microphone is active
@@ -72,7 +71,6 @@ def request_microphone_access():
         key="microphone",
         mode="audio",
         audio_receiver_size=1024,
-        required=True,
     )
 
 def initialize_app():
@@ -84,7 +82,6 @@ def check_microphone_access():
         key="microphone",
         mode="audio",
         audio_receiver_size=1024,
-        required=False,
     )
     return webrtc_ctx.state.playing
 
