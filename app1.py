@@ -15,6 +15,9 @@ def transcribe_speech():
     stop_button = st.sidebar.button("Stop Transcription")
     t = 0
 
+    # Get the device index of the client's microphone
+    device_index = 0  # Change this value to the correct device index
+
     # Continuously transcribe audio input
     while True:
         try:
@@ -27,7 +30,7 @@ def transcribe_speech():
                     st.info("Listening...")
 
                     # Use the client's microphone as the audio source
-                    with sr.Microphone() as source:
+                    with sr.Microphone(device_index=device_index) as source:
                         r.adjust_for_ambient_noise(source)
                         audio_data = r.listen(source)
 
