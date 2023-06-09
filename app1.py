@@ -90,21 +90,10 @@ def main():
     devices = get_available_devices()
 
     # Display the available audio devices in the sidebar
-    selected_device = st.sidebar.selectbox("Select Microphone", devices)
-
-    # Find the index of the selected device
-    device_index = None
-    if selected_device:
-        for i, device_info in enumerate(devices):
-            if device_info == selected_device:
-                device_index = i
-                break
-
-    if device_index is None:
-        st.error("No default microphone set. Please select a microphone device.")
+    selected_device_index = st.sidebar.selectbox("Select Microphone", range(len(devices)))
 
     # Remove "Loading..." message once the app is loaded
-    transcribe_speech(device_index)
+    transcribe_speech(selected_device_index)
 
 
 if __name__ == "__main__":
