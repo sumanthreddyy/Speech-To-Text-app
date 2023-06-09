@@ -2,7 +2,7 @@ import streamlit as st
 import speech_recognition as sr
 import time
 
-def transcribe_speech():
+def transcribe_speech(device_index):
     # Create a recognizer object
     r = sr.Recognizer()
 
@@ -14,14 +14,6 @@ def transcribe_speech():
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
     t = 0
-
-    # Get the list of available input devices
-    input_devices = sr.Microphone.list_microphone_names()
-    st.write("Available input devices:")
-    st.write(input_devices)
-
-    # Specify the correct device index
-    device_index = st.sidebar.selectbox("Select input device index:", options=list(range(len(input_devices))))
 
     # Continuously transcribe audio input
     while True:
@@ -75,9 +67,12 @@ def transcribe_speech():
 
 def main():
     st.title("Real-time Voice Transcription")
-    
+
+    # Get the device index from the user
+    device_index = st.sidebar.number_input("Enter the input device index")
+
     # Remove "Loading..." message once the app is loaded
-    transcribe_speech()
+    transcribe_speech(device_index)
 
 if __name__ == "__main__":
     main()
