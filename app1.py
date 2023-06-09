@@ -1,14 +1,14 @@
 import streamlit as st
 import speech_recognition as sr
 import time
+import pyaudio
 
 def transcribe_speech(device_index):
-    
     # Create a recognizer object
     r = sr.Recognizer()
-    mic = sr.Microphone(device_index=device_index)
+
     # Use the default microphone as the audio source
-    mic = sr.Microphone()
+    mic = sr.Microphone(device_index=device_index)
 
     # Adjust the microphone for ambient noise
     with mic as source:
@@ -21,7 +21,8 @@ def transcribe_speech(device_index):
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-    t=0
+    t = 0
+
     # Continuously transcribe audio input
     while True:
         try:
@@ -44,10 +45,9 @@ def transcribe_speech(device_index):
                         st.write(text)
 
                 else:
-                    
                     # Transcription already started
                     pass
-                   
+
             elif stop_button:
                 # Stop transcription
                 stop_transcription = True
@@ -57,9 +57,9 @@ def transcribe_speech(device_index):
                 break  # Exit the loop to stop transcription
 
             else:
-                while t<1:
+                while t < 1:
                     st.info("Click the Transcription button again...")
-                    t=t+1
+                    t = t + 1
 
             if stop_transcription:
                 # Transcription stopped, break the loop
@@ -71,11 +71,40 @@ def transcribe_speech(device_index):
             # Ignore any unrecognized speech
             pass
 
+
 def main():
     st.title("Real-time Voice Transcription")
-    device_index = st.sidebar.number_input("Microphone Device Index", min_value=0, max_value=10, value=0, step=1)
-    transcribe_speech(device_index)
+
+    # Get the available audio devices
+    def get_available_devices():
+        audio = pyaudio.PyAudio()
+        device_count = audio.get_device_count()
+        devices = []
+
+        for i in range(device_count):
+            device_info = audio.get_device_info_by_index(i)
+            devices.append(device_info["name"])
+
+        return devices
+
+    devices = get_available_devices()
+
+    # Display the available audio devices in the sidebar
+    selected_device = st.sidebar.selectbox("Select Microphone", devices)
+
+    # Find the index of the selected device
+    device_index = None
+    if selected_device:
+        for i, device_info in enumerate(devices):
+            if device_info == selected_device:
+                device_index = i
+                break
+
+    if device_index is None:
+        st.error("No default microphone set. Please select a microphone device.")
+
     # Remove "Loading..." message once the app is loaded
+    transcribe_speech(device_index)
 
 
 if __name__ == "__main__":
