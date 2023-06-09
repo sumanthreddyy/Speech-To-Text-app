@@ -6,12 +6,19 @@ def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
 
-    # Use WebRTC as the audio source
-    mic = sr.microphone.WebRTCMicrophone()
+    # Use the default microphone as the audio source
+    mic = None
 
-    # Adjust the microphone for ambient noise
-    with mic as source:
-        r.adjust_for_ambient_noise(source)
+    try:
+        mic = sr.Microphone()
+        with mic as source:
+            r.adjust_for_ambient_noise(source)
+    except sr.RequestError:
+        st.error("Could not access the microphone. Please make sure you have a microphone connected.")
+        return
+    except sr.UnknownValueError:
+        st.error("An unknown error occurred while accessing the microphone.")
+        return
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
