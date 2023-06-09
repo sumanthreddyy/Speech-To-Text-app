@@ -1,13 +1,13 @@
 import streamlit as st
 import speech_recognition as sr
 import time
-
+device_index=0
 def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
 
     # Use the default microphone as the audio source
-    mic = sr.Microphone()
+    mic = sr.Microphone(device_index=device_index)
 
     # Adjust the microphone for ambient noise
     with mic as source:
