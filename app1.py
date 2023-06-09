@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit_webrtc as webrtc
 import speech_recognition as sr
 
 def transcribe_speech(audio_data):
@@ -15,13 +14,6 @@ def transcribe_speech(audio_data):
 
 def main():
     st.title("Real-time Voice Transcription")
-
-    # Create a WebRTC microphone input
-    webrtc_ctx = webrtc.webrtc_streamer(
-        key="microphone",
-        mode=webrtc.WebRtcMode.SENDRECV,
-        audio_receiver_size=1024,
-    )
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
@@ -39,9 +31,9 @@ def main():
                 start_button = False  # Disable the Start button
                 st.info("Listening...")
 
-                # Get the audio frames from the WebRTC microphone input
-                audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=0.1)
-                audio_data = b"".join([frame.to_ndarray() for frame in audio_frames])
+                # Start microphone input
+                with sr.Microphone() as source:
+                    audio_data = sr.Recognizer().listen(source)
                 transcribe_speech(audio_data)
 
                 # Check if Stop button is clicked
@@ -66,27 +58,5 @@ def main():
             st.warning("Transcription Stopped")
             break  # Exit the loop to stop transcription
 
-def request_microphone_access():
-    webrtc_ctx = webrtc.webrtc_streamer(
-        key="microphone",
-        mode=webrtc.WebRtcMode.SENDRECV,
-        audio_receiver_size=1024,
-    )
-
-def initialize_app():
-    st.title("Real-time Voice Transcription")
-    st.sidebar.button("Grant Microphone Access", on_click=request_microphone_access)
-
-def check_microphone_access():
-    webrtc_ctx = webrtc.webrtc_streamer(
-        key="microphone",
-        mode=webrtc.WebRtcMode.SENDRECV,
-        audio_receiver_size=1024,
-    )
-    return webrtc_ctx.state.playing
-
 if __name__ == "__main__":
-    if check_microphone_access():
-        main()
-    else:
-        initialize_app()
+    main()
