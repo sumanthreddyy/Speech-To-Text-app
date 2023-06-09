@@ -6,7 +6,7 @@ def transcribe_speech():
     r = sr.Recognizer()
 
     # Create an instance of the Microphone class with the WebRTC Audio API
-    mic = sr.microphone.WebRTCMicrophone()
+    mic = sr.Microphone.WebRTCMicrophone()
 
     # Adjust the microphone for ambient noise
     with mic as source:
