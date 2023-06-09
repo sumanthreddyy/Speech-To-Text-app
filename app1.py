@@ -17,7 +17,10 @@ def main():
     st.title("Real-time Voice Transcription")
 
     # Create a WebRTC microphone input
-    webrtc_ctx = webrtc.StreamlitWebRTC()
+    webrtc_ctx = webrtc.VideoTransformerBase(
+        transform_func=None,
+        fps=30,
+    )
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
@@ -35,11 +38,8 @@ def main():
                 start_button = False  # Disable the Start button
                 st.info("Listening...")
 
-                # Create a WebRTC audio processor
-                audio_processor = webrtc_ctx._create_audio_processor()
-
-                # Get the audio frames from the WebRTC audio processor
-                for audio_frames in audio_processor.generator():
+                # Get the audio frames from the WebRTC microphone input
+                for audio_frames in webrtc_ctx.generator():
                     audio_data = b"".join([frame.to_ndarray() for frame in audio_frames])
                     transcribe_speech(audio_data)
 
@@ -66,7 +66,10 @@ def main():
             break  # Exit the loop to stop transcription
 
 def request_microphone_access():
-    webrtc_ctx = webrtc.StreamlitWebRTC()
+    webrtc_ctx = webrtc.VideoTransformerBase(
+        transform_func=None,
+        fps=30,
+    )
     webrtc_ctx.request_media_stream_constraints(audio=True)
 
 def initialize_app():
@@ -74,7 +77,10 @@ def initialize_app():
     st.sidebar.button("Grant Microphone Access", on_click=request_microphone_access)
 
 def check_microphone_access():
-    webrtc_ctx = webrtc.StreamlitWebRTC()
+    webrtc_ctx = webrtc.VideoTransformerBase(
+        transform_func=None,
+        fps=30,
+    )
     return webrtc_ctx.state.playing
 
 if __name__ == "__main__":
