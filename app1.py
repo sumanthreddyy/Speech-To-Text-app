@@ -1,7 +1,7 @@
 import streamlit as st
 import speech_recognition as sr
 import time
-print(sr.Microphone.list_microphone_names())
+
 def transcribe_speech(device_index):
     # Create a recognizer object
     r = sr.Recognizer()
@@ -66,7 +66,9 @@ def transcribe_speech(device_index):
             pass
 
 def main():
+    
     st.title("Real-time Voice Transcription")
+    print(sr.Microphone.list_microphone_names())
 
     # Get the device index from the user
     device_index = st.sidebar.number_input("Enter the input device index", value=0, step=1)
