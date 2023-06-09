@@ -21,7 +21,7 @@ def transcribe_speech():
     st.write(input_devices)
 
     # Specify the correct device index
-    device_index = 0  # Change this value to the correct device index
+    device_index = st.sidebar.selectbox("Select input device index:", options=list(range(len(input_devices))))
 
     # Continuously transcribe audio input
     while True:
