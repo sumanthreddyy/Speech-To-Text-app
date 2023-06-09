@@ -1,6 +1,6 @@
 import streamlit as st
 import speech_recognition as sr
-
+t=0
 def transcribe_speech(audio_data):
     # Create a recognizer object
     r = sr.Recognizer()
@@ -47,7 +47,9 @@ def main():
                 pass
         else:
             if not is_transcribing:
+                while t<1:
                 st.info("Click the Start Transcription button...")
+                t+=1
             else:
                 st.info("Transcription in progress...")
 
