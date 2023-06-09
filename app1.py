@@ -6,8 +6,8 @@ def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
 
-    # Use the default microphone as the audio source
-    mic = sr.Microphone()
+    # Use WebRTC as the audio source
+    mic = sr.microphone.WebRTCMicrophone()
 
     # Adjust the microphone for ambient noise
     with mic as source:
@@ -20,7 +20,8 @@ def transcribe_speech():
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-    t=0
+    t = 0
+
     # Continuously transcribe audio input
     while True:
         try:
@@ -45,7 +46,7 @@ def transcribe_speech():
                 else:
                     # Transcription already started
                     pass
-                   
+
             elif stop_button:
                 # Stop transcription
                 stop_transcription = True
@@ -55,9 +56,9 @@ def transcribe_speech():
                 break  # Exit the loop to stop transcription
 
             else:
-                while t<1:
+                while t < 1:
                     st.info("Click the Transcription button again...")
-                    t=t+1
+                    t += 1
 
             if stop_transcription:
                 # Transcription stopped, break the loop
@@ -71,7 +72,7 @@ def transcribe_speech():
 
 def main():
     st.title("Real-time Voice Transcription")
-    
+
     # Remove "Loading..." message once the app is loaded
     transcribe_speech()
 
