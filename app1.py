@@ -19,7 +19,7 @@ def main():
     # Create a WebRTC microphone input
     webrtc_ctx = webrtc.webrtc_streamer(
         key="microphone",
-        mode="audio",
+        mode=webrtc.WebRtcMode.AUDIO_ONLY,
         audio_receiver_size=1024,
     )
 
@@ -69,7 +69,7 @@ def main():
 def request_microphone_access():
     webrtc_ctx = webrtc.webrtc_streamer(
         key="microphone",
-        mode="audio",
+        mode=webrtc.WebRtcMode.AUDIO_ONLY,
         audio_receiver_size=1024,
     )
 
@@ -80,7 +80,7 @@ def initialize_app():
 def check_microphone_access():
     webrtc_ctx = webrtc.webrtc_streamer(
         key="microphone",
-        mode="audio",
+        mode=webrtc.WebRtcMode.AUDIO_ONLY,
         audio_receiver_size=1024,
     )
     return webrtc_ctx.state.playing
