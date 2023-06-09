@@ -69,7 +69,10 @@ def main():
     st.title("Real-time Voice Transcription")
 
     # Get the device index from the user
-    device_index = st.sidebar.number_input("Enter the input device index", value=None)
+    device_index = st.sidebar.number_input("Enter the input device index", value=None, step=1)
+
+    if device_index is not None:
+        device_index = int(device_index)
 
     # Remove "Loading..." message once the app is loaded
     transcribe_speech(device_index)
