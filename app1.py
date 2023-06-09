@@ -15,7 +15,12 @@ def transcribe_speech():
     stop_button = st.sidebar.button("Stop Transcription")
     t = 0
 
-    # Get the device index of the client's microphone
+    # Get the list of available input devices
+    input_devices = sr.Microphone.list_microphone_names()
+    st.write("Available input devices:")
+    st.write(input_devices)
+
+    # Specify the correct device index
     device_index = 0  # Change this value to the correct device index
 
     # Continuously transcribe audio input
