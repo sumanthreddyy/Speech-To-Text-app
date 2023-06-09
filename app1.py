@@ -1,12 +1,13 @@
 import streamlit as st
 import speech_recognition as sr
+import time
 
 def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
 
-    # Create an instance of the Microphone class with the WebRTC Audio API
-    mic = sr.Microphone.WebRTCMicrophone()
+    # Use the default microphone as the audio source
+    mic = sr.Microphone()
 
     # Adjust the microphone for ambient noise
     with mic as source:
@@ -19,7 +20,7 @@ def transcribe_speech():
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-
+    t=0
     # Continuously transcribe audio input
     while True:
         try:
@@ -31,16 +32,20 @@ def transcribe_speech():
                     start_button = False  # Disable the Start button
                     st.info("Listening...")
 
-                with mic as source:
-                    audio_data = r.listen(source)
+                    with mic as source:
+                        audio_data = r.listen(source)
 
-                # Recognize speech using Google Speech Recognition
-                text = r.recognize_google(audio_data)
+                    # Recognize speech using Google Speech Recognition
+                    text = r.recognize_google(audio_data)
 
-                # Display the transcribed text in the Streamlit app
-                if text.strip():  # Check if the text is not empty
-                    st.write(text)
+                    # Display the transcribed text in the Streamlit app
+                    if text.strip():  # Check if the text is not empty
+                        st.write(text)
 
+                else:
+                    # Transcription already started
+                    pass
+                   
             elif stop_button:
                 # Stop transcription
                 stop_transcription = True
@@ -49,17 +54,24 @@ def transcribe_speech():
                 st.warning("Transcription Stopped")
                 break  # Exit the loop to stop transcription
 
+            else:
+                while t<1:
+                    st.info("Click the Transcription button again...")
+                    t=t+1
+
+            if stop_transcription:
+                # Transcription stopped, break the loop
+                break
+
+            time.sleep(0.1)
+
         except sr.UnknownValueError:
             # Ignore any unrecognized speech
             pass
 
-        if stop_transcription:
-            # Transcription stopped, break the loop
-            break
-
 def main():
     st.title("Real-time Voice Transcription")
-
+    
     # Remove "Loading..." message once the app is loaded
     transcribe_speech()
 
