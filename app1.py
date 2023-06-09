@@ -8,7 +8,12 @@ def transcribe_speech(device_index):
     r = sr.Recognizer()
 
     # Use the default microphone as the audio source
-    mic = sr.Microphone(device_index=device_index)
+    try:
+        mic = sr.Microphone(device_index=device_index)
+    except OSError as e:
+        st.error(f"Error: {e}")
+        st.error("No input devices available.")
+        return
 
     # Adjust the microphone for ambient noise
     with mic as source:
@@ -90,7 +95,11 @@ def main():
     devices = get_available_devices()
 
     # Display the available audio devices in the sidebar
-    selected_device_index = st.sidebar.selectbox("Select Microphone", range(len(devices)))
+    if len(devices) > 0:
+        selected_device_index = st.sidebar.selectbox("Select Microphone", range(len(devices)))
+    else:
+        st.sidebar.error("No input devices available.")
+        return
 
     # Remove "Loading..." message once the app is loaded
     transcribe_speech(selected_device_index)
