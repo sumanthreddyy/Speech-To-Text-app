@@ -1,17 +1,10 @@
 import streamlit as st
 import speech_recognition as sr
 import time
-#device_index=0
+
 def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
-
-    # Use the default microphone as the audio source
-    mic = sr.Microphone()
-
-    # Adjust the microphone for ambient noise
-    with mic as source:
-        r.adjust_for_ambient_noise(source)
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
@@ -20,7 +13,8 @@ def transcribe_speech():
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-    t=0
+    t = 0
+
     # Continuously transcribe audio input
     while True:
         try:
@@ -32,7 +26,9 @@ def transcribe_speech():
                     start_button = False  # Disable the Start button
                     st.info("Listening...")
 
-                    with mic as source:
+                    # Use the client's microphone as the audio source
+                    with sr.Microphone() as source:
+                        r.adjust_for_ambient_noise(source)
                         audio_data = r.listen(source)
 
                     # Recognize speech using Google Speech Recognition
@@ -43,10 +39,9 @@ def transcribe_speech():
                         st.write(text)
 
                 else:
-                    
                     # Transcription already started
                     pass
-                   
+
             elif stop_button:
                 # Stop transcription
                 stop_transcription = True
@@ -56,9 +51,9 @@ def transcribe_speech():
                 break  # Exit the loop to stop transcription
 
             else:
-                while t<1:
+                while t < 1:
                     st.info("Click the Transcription button again...")
-                    t=t+1
+                    t += 1
 
             if stop_transcription:
                 # Transcription stopped, break the loop
