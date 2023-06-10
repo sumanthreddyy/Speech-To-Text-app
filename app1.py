@@ -1,26 +1,34 @@
 import streamlit as st
 import speech_recognition as sr
 import time
-import av
-import numpy as np
-import webrtc_streamer
-from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
-class AudioTransformer(VideoTransformerBase):
-    def transform(self, frame):
-        audio = frame.to_ndarray(format="s16")
-        return audio
+def check_microphone_access():
+    # Create a recognizer object
+    r = sr.Recognizer()
+
+    # Get available microphones
+    mic_list = sr.Microphone.list_microphone_names()
+
+    # Display microphone selection dropdown
+    selected_mic = st.sidebar.selectbox("Select Microphone", mic_list)
+
+    if selected_mic:
+        # Use the selected microphone as the audio source
+        mic = sr.Microphone(device_index=mic_list.index(selected_mic))
+
+        # Check if the microphone access is available
+        with mic as source:
+            try:
+                r.adjust_for_ambient_noise(source)
+                return True
+            except sr.RequestError:
+                return False
+    else:
+        return False
 
 def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
-
-    # Use the default microphone as the audio source
-    mic = sr.Microphone()
-
-    # Adjust the microphone for ambient noise
-    with mic as source:
-        r.adjust_for_ambient_noise(source)
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
@@ -29,7 +37,16 @@ def transcribe_speech():
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-    t = 0
+
+    # Check microphone access
+    microphone_access = check_microphone_access()
+
+    if not microphone_access:
+        st.error("Microphone access not available. Please check your microphone settings.")
+        return
+
+    # Adjust the microphone for ambient noise
+    mic = sr.Microphone()
 
     # Continuously transcribe audio input
     while True:
@@ -42,33 +59,20 @@ def transcribe_speech():
                     start_button = False  # Disable the Start button
                     st.info("Listening...")
 
-                    # WebRTC audio stream
-                    webrtc_ctx = webrtc_streamer(
-                        key="example",
-                        mode=WebRtcMode.SENDRECV,
-                        audio_transformer_factory=AudioTransformer,
-                        async_transform=True,
-                    )
+                    with mic as source:
+                        audio_data = r.listen(source)
 
-                    # Continuously process audio frames
-                    for audio_frame in webrtc_ctx.audio_frames():
-                        audio_data = np.frombuffer(audio_frame.to_ndarray(), dtype=np.int16)
+                    # Recognize speech using Google Speech Recognition
+                    text = r.recognize_google(audio_data)
 
-                        # Recognize speech using Google Speech Recognition
-                        text = r.recognize_google(audio_data)
-
-                        # Display the transcribed text in the Streamlit app
-                        if text.strip():  # Check if the text is not empty
-                            st.write(text)
-
-                        if stop_transcription:
-                            # Transcription stopped, break the loop
-                            break
+                    # Display the transcribed text in the Streamlit app
+                    if text.strip():  # Check if the text is not empty
+                        st.write(text)
 
                 else:
                     # Transcription already started
                     pass
-
+                   
             elif stop_button:
                 # Stop transcription
                 stop_transcription = True
@@ -76,11 +80,6 @@ def transcribe_speech():
                 stop_button = False  # Disable the Stop button
                 st.warning("Transcription Stopped")
                 break  # Exit the loop to stop transcription
-
-            else:
-                while t < 1:
-                    st.info("Click the Transcription button again...")
-                    t += 1
 
             if stop_transcription:
                 # Transcription stopped, break the loop
