@@ -4,7 +4,7 @@ import time
 import av
 import numpy as np
 import webrtc_streamer
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
 class AudioTransformer(VideoTransformerBase):
     def transform(self, frame):
@@ -45,7 +45,7 @@ def transcribe_speech():
                     # WebRTC audio stream
                     webrtc_ctx = webrtc_streamer(
                         key="example",
-                        mode=webrtc_streamer.WebRtcMode.SENDRECV,
+                        mode=WebRtcMode.SENDRECV,
                         audio_transformer_factory=AudioTransformer,
                         async_transform=True,
                     )
