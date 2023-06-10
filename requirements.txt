@@ -1,6 +1,6 @@
 SpeechRecognition
 streamlit
 pyaudio
-streamlit_webrtc==0.45.0
+streamlit-webrtc==0.28.0
 numpy
 av
