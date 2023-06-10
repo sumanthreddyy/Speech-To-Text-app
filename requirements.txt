@@ -5,3 +5,4 @@ streamlit-webrtc==0.28.0
 numpy
 av
 webrtc_streamer
+flask
