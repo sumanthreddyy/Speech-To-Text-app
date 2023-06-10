@@ -3,7 +3,8 @@ import speech_recognition as sr
 import time
 import av
 import numpy as np
-from webrtc_streamer import webrtc_streamer, VideoTransformerBase
+import webrtc_streamer
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 class AudioTransformer(VideoTransformerBase):
     def transform(self, frame):
