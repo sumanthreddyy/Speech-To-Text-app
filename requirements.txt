@@ -6,4 +6,4 @@ numpy
 av
 flask
 streamlit==1.20.0
-webrtc_streamlit
+webrtc_streamer
