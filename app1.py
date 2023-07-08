@@ -2,33 +2,16 @@ import streamlit as st
 import speech_recognition as sr
 import time
 
-def check_microphone_access():
-    # Create a recognizer object
-    r = sr.Recognizer()
-
-    # Get available microphones
-    mic_list = sr.Microphone.list_microphone_names()
-
-    # Display microphone selection dropdown
-    selected_mic = st.sidebar.selectbox("Select Microphone", mic_list)
-
-    if selected_mic:
-        # Use the selected microphone as the audio source
-        mic = sr.Microphone(device_index=mic_list.index(selected_mic))
-
-        # Check if the microphone access is available
-        with mic as source:
-            try:
-                r.adjust_for_ambient_noise(source)
-                return True
-            except sr.RequestError:
-                return False
-    else:
-        return False
-
 def transcribe_speech():
     # Create a recognizer object
     r = sr.Recognizer()
+
+    # Use the default microphone as the audio source
+    mic = sr.Microphone()
+
+    # Adjust the microphone for ambient noise
+    with mic as source:
+        r.adjust_for_ambient_noise(source)
 
     # Flag to indicate if the microphone is active
     is_transcribing = False
@@ -37,17 +20,7 @@ def transcribe_speech():
     # Microphone button
     start_button = st.sidebar.button("Start Transcription")
     stop_button = st.sidebar.button("Stop Transcription")
-
-    # Check microphone access
-    microphone_access = check_microphone_access()
-
-    if not microphone_access:
-        st.error("Microphone access not available. Please check your microphone settings.")
-        return
-
-    # Adjust the microphone for ambient noise
-    mic = sr.Microphone()
-
+    t=0
     # Continuously transcribe audio input
     while True:
         try:
@@ -70,6 +43,7 @@ def transcribe_speech():
                         st.write(text)
 
                 else:
+                    
                     # Transcription already started
                     pass
                    
@@ -80,6 +54,11 @@ def transcribe_speech():
                 stop_button = False  # Disable the Stop button
                 st.warning("Transcription Stopped")
                 break  # Exit the loop to stop transcription
+
+            else:
+                while t<1:
+                    st.info("Click the Transcription button again...")
+                    t=t+1
 
             if stop_transcription:
                 # Transcription stopped, break the loop
